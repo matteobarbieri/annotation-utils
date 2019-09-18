@@ -25,7 +25,8 @@ def draw_corners(x, y, w, h, segment_length,
         The ImageDraw object required for drawing on a pil image.
 
     color : tuple
-        A 3-tuple representing the RGB values of the lines' color.
+        A 3-tuple representing the RGB values of the lines' color. The default
+        is (0, 255, 0) (green).
 
     width : int
         The width of the segments composing the corner.
@@ -55,21 +56,87 @@ def draw_corners(x, y, w, h, segment_length,
     pil_draw.line([x, y+h-segment_length, x, y+h], fill=color, width=width)
 
 
-def annotate_object(x, y, w, h, annotation_text, pil_draw,
+def annotate_object(x, y, w, h, label_text, pil_draw,
                     font, padding, segment_length_ratio, line_length_ratio,
                     line_width,
-                    outline_color, text_color, bg_color,
+                    outline_color, text_color, text_bg_color=(255, 255, 255),
                     scale=1,
                     object_symbol=None, font_symbol=None,
                     bg_color_symbol=None):
     """
-    Draws
+    Draws corners around the identified object, plus a label and optionally a
+    symbol.
 
     Parameters
     ----------
 
-    line_length_ration : float
+    x : int
+        The x coordinate of the top left corner of the bounding box.
+
+    y : int
+        The y coordinate of the top left corner of the bounding box.
+
+    w : int
+        The width of the bounding box.
+
+    h : int
+        The height of the bounding box.
+
+    label_text : str
+        The label displayed close to the bounding box.
+
+    pil_draw : PIL.ImageDraw
+        The ImageDraw object required for drawing on a pil image.
+
+    font : PIL.ImageFont
+        The font used to write the label text.
+
+    padding : int
+        The padding of the text w.r.t. the boxes where is written inside.
+
+    segment_length_ratio,
+        Between 0 and 1, the length of the segments composing the corners.
+
+    line_length_ratio : float
         Between 0 and 1, the length of the central top line
+
+    line_width : int
+        The width of all lines used in the annotation.
+
+    outline_color : tuple
+        A 3-tuple representing the RGB values of the outline color.
+
+    text_color : tuple
+        A 3-tuple representing the RGB values of the text. The default is
+        (0, 0, 0) (black).
+
+    text_bg_color : tuple
+        A 3-tuple representing the RGB values of the background color of the
+        box where the label is written. The default is (255, 255, 255) (white).
+
+    scale : int
+        The scale of annotations, used to change the size of boxes and symbols.
+        The default value is 1, which should be ok for full HD or 2k
+        images. For 4k images use 2.
+
+    object_symbol : str or None
+        A character representing an icon. Can be anything really but should be
+        chosen by one of those fonts containing special symbols, such as one
+        from the NerdFonts family.
+        See https://www.nerdfonts.com for several examples.
+        If `None`, the symbol (and its square) are not drawn on the image.
+        The default value is `None`.
+
+    font_symbol : PIL.ImageFont or None
+        The font used to draw the special symbols.
+        Only required if parameter object_symbol is not None.
+        The default value is `None`.
+
+    bg_color_symbol : tuple or None
+        A 3-tuple representing the RGB values of the background of the box
+        where the symbols is drawn.
+        Only required if parameter object_symbol is not None.
+        The default value is `None`.
 
     >>> # Import all required modules
     >>> from PIL import Image, ImageDraw, ImageFont
@@ -145,7 +212,7 @@ def annotate_object(x, y, w, h, annotation_text, pil_draw,
     y_text = y_symbol
 
     TEXT_BOX_HEIGHT = 30 * scale
-    TEXT_BOX_WIDTH = (len(annotation_text)) * 21 * scale
+    TEXT_BOX_WIDTH = (len(label_text)) * 21 * scale
 
     # Only draw symbol if passed as an argument, else skip
     if object_symbol is not None:
@@ -177,11 +244,11 @@ def annotate_object(x, y, w, h, annotation_text, pil_draw,
     # Draw the rectangle for the text
     pil_draw.rectangle(
         [x_text, y_text, x_text+TEXT_BOX_WIDTH, y_text + TEXT_BOX_HEIGHT],
-        fill=(255, 255, 255),
+        fill=text_bg_color,
         outline=(0, 0, 0))
 
     # Finally, write the actual LP text in the square
     pil_draw.text(
         # (x_text + 4, y_text - 2),  # for nerdfonts
         (x_text + 4*scale, y_text - 7*scale),  # for open sans
-        annotation_text, text_color, font=font)
+        label_text, text_color, font=font)
