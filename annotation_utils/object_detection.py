@@ -63,8 +63,44 @@ def annotate_object(x, y, w, h, annotation_text, pil_draw,
                     object_symbol=None, font_symbol=None,
                     bg_color_symbol=None):
     """
+    Draws
+
+    Parameters
+    ----------
+
     line_length_ration : float
         Between 0 and 1, the length of the central top line
+
+    >>> # Import all required modules
+    >>> from PIL import Image, ImageDraw, ImageFont
+
+    >>> # Load the original image from disk
+    >>> pil_image = Image.open('/path/to/image.png')
+
+    >>> # Instantiate the ImageDraw object to draw on the image
+    >>> pil_draw = ImageDraw(pil_image)
+
+    >>> # Load the font used to write object labels
+    >>> font = ImageFont.truetype('/path/tp/font.ttf', size=30)
+
+    >>> # Load the font used for symbols (e.g. any of the Nerdfont) (optional)
+    >>> font_symbol = ImageFont.truetype('/path/tp/font_symbol.ttf', size=40)
+
+    >>> annotate_object(
+            x, y, w, h  # Bounding box coordinates
+            label_text, pil_draw,
+            font,
+            10,  # padding
+            0.15,  # segment_ratio
+            0.4,  # line_length_ratio
+            3, # line_width
+            (0, 255, 0),  # outline color, (green in this case)
+            (0, 0, 0),  # text color (black)
+            (255, 255, 255),  # label box background color (white)
+            2, #  scale parameters, 1 for full HD images, 2 for 4k,
+            object_symbol=" ",  # The actual symbol, as a string (requires special fonts)  # noqa
+            font_symbol=font_large,
+            bg_color_symbol=(0, 255, 0))
     """
 
     # Create a transparent version of the color
@@ -137,7 +173,6 @@ def annotate_object(x, y, w, h, annotation_text, pil_draw,
 
         # Compute coordinates for the acutal LP text
         x_text = x_symbol
-
 
     # Draw the rectangle for the text
     pil_draw.rectangle(
