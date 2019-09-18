@@ -106,35 +106,44 @@ def annotate_object(x, y, w, h, annotation_text, pil_draw,
     x_symbol = x_c + 3 + scale * 5
     y_symbol = y_p - line_height
 
-    # Draw the square for the symbol
-    # TEXT_BOX_WIDTH = (len(annotation_text)) * 21
-    TEXT_BOX_WIDTH = (len(annotation_text)) * 21 * scale
-    TEXT_BOX_HEIGHT = 30 * scale
-
-    # Draw the rectangle for the symbol
-    pil_draw.rectangle(
-        [x_symbol, y_symbol, x_symbol+TEXT_BOX_HEIGHT,
-         y_symbol + TEXT_BOX_HEIGHT],
-        fill=outline_color,
-        outline=(0, 0, 0))
-
-    # Compute coordinates for the acutal LP text
-    x_text = x_symbol + TEXT_BOX_HEIGHT + 5 * scale
     y_text = y_symbol
+
+    TEXT_BOX_HEIGHT = 30 * scale
+    TEXT_BOX_WIDTH = (len(annotation_text)) * 21 * scale
+
+    # Only draw symbol if passed as an argument, else skip
+    if object_symbol is not None:
+
+        # Draw the square for the symbol
+        pil_draw.rectangle(
+            [
+                x_symbol,
+                y_symbol,
+                x_symbol+TEXT_BOX_HEIGHT,
+                y_symbol+TEXT_BOX_HEIGHT],
+            fill=outline_color,
+            outline=(0, 0, 0))
+
+        # Draw the symbol corresponding to the identified object
+        pil_draw.text(
+            (x_symbol + 3*scale, y_symbol - 3 - 5*scale),
+            object_symbol,
+            text_color, font=font_symbol)
+
+        # Compute coordinates for the acutal LP text
+        x_text = x_symbol + TEXT_BOX_HEIGHT + 5 * scale
+
+    else:
+
+        # Compute coordinates for the acutal LP text
+        x_text = x_symbol
+
 
     # Draw the rectangle for the text
     pil_draw.rectangle(
         [x_text, y_text, x_text+TEXT_BOX_WIDTH, y_text + TEXT_BOX_HEIGHT],
         fill=(255, 255, 255),
         outline=(0, 0, 0))
-
-    # Draw the symbol corresponding to the identified vehicle
-    pil_draw.text(
-        # (x_symbol + 3, y_symbol - 8),
-        (x_symbol + 3*scale, y_symbol - 3 - 5*scale),
-        # VEHICLE_SYMBOLS[vehicle_category],
-        object_symbol,
-        text_color, font=font_symbol)
 
     # Finally, write the actual LP text in the square
     pil_draw.text(
