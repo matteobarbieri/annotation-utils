@@ -33,7 +33,7 @@ def draw_corners(x, y, w, h, segment_length,
 
     >>> from PIL import Image, ImageDraw
     >>> pil_image = Image.open('/path/to/image.png')
-    >>> pil_draw = ImageDraw(pil_image)
+    >>> pil_draw = ImageDraw.Draw(pil_image)
     >>> draw_corners(30, 40, 100, 60, 12, pil_draw)
     """
 
@@ -145,7 +145,7 @@ def annotate_object(x, y, w, h, label_text, pil_draw,
     >>> pil_image = Image.open('/path/to/image.png')
 
     >>> # Instantiate the ImageDraw object to draw on the image
-    >>> pil_draw = ImageDraw(pil_image)
+    >>> pil_draw = ImageDraw.Draw(pil_image)
 
     >>> # Load the font used to write object labels
     >>> font = ImageFont.truetype('/path/tp/font.ttf', size=30)
